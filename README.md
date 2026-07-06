@@ -10,7 +10,7 @@ documento técnico.
 
 | Ruta | Contenido | Escenario |
 |---|---|---|
-| `docs/EGE_Haina_Evaluacion_Tecnica.pdf` | Enunciado original de la prueba | — |
+| `docs/EGE_Haina_Evaluacion_Tecnica.pdf` | Evaluación técnica | — |
 | `docs/Documento_Tecnico_EGE_Haina.docx` | Documento técnico con el diseño de los 3 escenarios | 1, 2 y 3 |
 | `escenario-1-termografia/` | Datasheets de cámaras FLIR, dron DJI y plan termográfico | 1 |
 | `escenario-2-strings/` | Manuales Huawei SmartLogger/SUN2000 (Modbus) y análisis de strings | 2 |
