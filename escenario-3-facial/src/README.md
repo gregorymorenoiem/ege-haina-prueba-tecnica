@@ -33,7 +33,8 @@ docker compose up --build
 
 **Solución de problemas:**
 - *Puerto ocupado* (`port is already allocated`): copie `.env.example` a `.env` y cambie
-  `API_PORT` y/o `POSTGRES_PORT`; vuelva a ejecutar `docker compose up`.
+  `API_PORT` y/o `POSTGRES_PORT`; ejecute `docker compose down` (limpia los contenedores
+  y la red a medio crear del intento fallido) y luego `docker compose up`.
 - *Reiniciar desde cero* (borra datos de demo): `docker compose down -v` y luego
   `docker compose up --build`.
 - En Docker Desktop asigne al menos **4 GB de RAM** (Settings → Resources); el modelo
