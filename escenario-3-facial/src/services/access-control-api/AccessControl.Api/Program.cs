@@ -123,12 +123,12 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-// Migraciones al arrancar (con reintentos: en docker-compose Postgres puede tardar).
-await AplicarMigraciones(app);
+// Migraciones y seed al arrancar (con reintentos: en docker-compose Postgres puede tardar).
+await PrepararBaseDeDatos(app);
 
 app.Run();
 
-static async Task AplicarMigraciones(WebApplication app)
+static async Task PrepararBaseDeDatos(WebApplication app)
 {
     using var alcance = app.Services.CreateScope();
     var db = alcance.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -140,7 +140,7 @@ static async Task AplicarMigraciones(WebApplication app)
         try
         {
             await db.Database.MigrateAsync();
-            return;
+            break;
         }
         catch (Exception ex) when (intento < 10)
         {
@@ -149,4 +149,7 @@ static async Task AplicarMigraciones(WebApplication app)
             await Task.Delay(TimeSpan.FromSeconds(3));
         }
     }
+
+    var hasher = alcance.ServiceProvider.GetRequiredService<IPasswordHasher<Usuario>>();
+    await DbSeeder.Ejecutar(db, hasher, app.Logger);
 }

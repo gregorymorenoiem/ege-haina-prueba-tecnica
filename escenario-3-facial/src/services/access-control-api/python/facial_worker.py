@@ -21,6 +21,7 @@ sistema conoce Python.
 
 import base64
 import json
+import os
 import sys
 
 import cv2
@@ -42,7 +43,14 @@ def responder(payload: dict) -> None:
 
 def cargar_motor() -> FaceAnalysis:
     log(f"cargando modelo {MODELO} (CPU)...")
-    motor = FaceAnalysis(name=MODELO, providers=["CPUExecutionProvider"])
+    # FACIAL_MODELS_DIR permite fijar dónde viven los modelos (en Docker se
+    # pre-descargan en build a /opt/insightface); sin la variable se usa
+    # ~/.insightface, el default de la librería.
+    extras = {}
+    modelos_dir = os.environ.get("FACIAL_MODELS_DIR")
+    if modelos_dir:
+        extras["root"] = modelos_dir
+    motor = FaceAnalysis(name=MODELO, providers=["CPUExecutionProvider"], **extras)
     # det_size estándar; con fotos de carnet y capturas de terminal es suficiente.
     motor.prepare(ctx_id=-1, det_size=(640, 640))
     log("modelo cargado, listo para operar")

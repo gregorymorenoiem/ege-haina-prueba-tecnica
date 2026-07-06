@@ -1,0 +1,42 @@
+# MVP Escenario 3 — una sola máquina: PostgreSQL + API (que sirve también el
+# frontend y ejecuta el worker Python embebido).
+#
+# Todos los valores tienen default: `docker compose up --build` funciona sin .env.
+# Para personalizar, copie .env.example a .env.
+
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-egehaina_acceso}
+      POSTGRES_USER: ${POSTGRES_USER:-egehaina}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-egehaina}
+    ports:
+      - "${POSTGRES_PORT:-5433}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-egehaina} -d ${POSTGRES_DB:-egehaina_acceso}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  access-control-api:
+    build:
+      context: .
+      dockerfile: services/access-control-api/Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      ConnectionStrings__Default: "Host=postgres;Port=5432;Database=${POSTGRES_DB:-egehaina_acceso};Username=${POSTGRES_USER:-egehaina};Password=${POSTGRES_PASSWORD:-egehaina}"
+      Jwt__Secret: ${JWT_SECRET:-clave-solo-para-demo-local-cambiar-en-produccion!}
+      Facial__UmbralSimilitud: ${FACIAL_UMBRAL_SIMILITUD:-0.40}
+    ports:
+      - "${API_PORT:-8080}:8080"
+    volumes:
+      # Fotos de carnet y capturas de marcación (./data/fotos, ./data/capturas).
+      - ./data:/app/data
+
+volumes:
+  pgdata:
