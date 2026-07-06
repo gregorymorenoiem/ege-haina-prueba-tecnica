@@ -1,3 +1,4 @@
+using AccessControl.Domain;
 using AccessControl.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,6 +24,11 @@ public class GlobalExceptionMiddleware
         try
         {
             await _next(context);
+        }
+        catch (ReglaNegocioException ex)
+        {
+            await EscribirProblema(context, StatusCodes.Status409Conflict,
+                "Regla de negocio violada", ex.Message);
         }
         catch (FacialException ex)
         {
