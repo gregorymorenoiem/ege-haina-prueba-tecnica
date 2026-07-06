@@ -10,7 +10,7 @@ documento técnico.
 
 | Ruta | Contenido | Escenario |
 |---|---|---|
-| `Prueba_Tecnica_EGE_Haina.pdf` | Enunciado original de la prueba (raíz del repo) | — |
+| `EGE_Haina_Evaluacion_Tecnica.pdf` | Enunciado original de la prueba (raíz del repo) | — |
 | `docs/Documento_Tecnico_EGE_Haina.docx` | Documento técnico con el diseño de los 3 escenarios | 1, 2 y 3 |
 | `escenario-1-termografia/` | Datasheets de cámaras FLIR, dron DJI y plan termográfico | 1 |
 | `escenario-2-strings/` | Manuales Huawei SmartLogger/SUN2000 (Modbus) y análisis de strings | 2 |
@@ -19,6 +19,21 @@ documento técnico.
 > **El código está en [`escenario-3-facial/src/`](escenario-3-facial/src/)** — las
 > instrucciones de ejecución (Docker, demo en 2 minutos, credenciales) están en
 > [`escenario-3-facial/src/README.md`](escenario-3-facial/src/README.md).
+
+## Ejecución rápida (evaluador)
+
+Solo se necesita **Docker Desktop** instalado y corriendo. Todo lo demás (SDK .NET,
+Python, modelo facial, base de datos) viene dentro de las imágenes:
+
+```bash
+git clone https://github.com/gregorymorenoiem/ege-haina-prueba-tecnica.git
+cd ege-haina-prueba-tecnica/escenario-3-facial/src
+docker compose up --build
+```
+
+Al terminar (la primera build tarda varios minutos): frontend en http://localhost:8080,
+Swagger en http://localhost:8080/swagger. Credenciales de demo y pasos de la prueba en
+[`escenario-3-facial/src/README.md`](escenario-3-facial/src/README.md).
 
 ## Ramas y flujo de trabajo
 

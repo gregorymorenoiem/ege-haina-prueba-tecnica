@@ -6,25 +6,38 @@ valida por similitud de coseno contra la galería de empleados **de esa planta**
 la marcación con su score. API en ASP.NET Core 8; el modelo preentrenado corre en un proceso
 hijo Python persistente (InsightFace).
 
-## Quick start
+## Quick start (Docker Desktop)
 
-Requisitos: **Docker** (con Docker Compose). Nada más.
+**Único requisito: [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+instalado y corriendo.** No hace falta instalar .NET, Python, PostgreSQL ni descargar
+modelos: todo viene incluido en las imágenes que construye el compose (SDK .NET 8,
+Python 3.11, InsightFace con el modelo `buffalo_l` pre-descargado y la base de datos).
 
 ```bash
-cd escenario-3-facial/src
+git clone https://github.com/gregorymorenoiem/ege-haina-prueba-tecnica.git
+cd ege-haina-prueba-tecnica/escenario-3-facial/src
 docker compose up --build
 ```
 
-> La primera build tarda varios minutos: compila la API e instala InsightFace con el modelo
-> `buffalo_l` (~300 MB) **dentro de la imagen**, para que el arranque no dependa de la red.
+> ⏱️ La **primera build tarda varios minutos** (compila la API, instala InsightFace y
+> hornea el modelo de ~300 MB dentro de la imagen; requiere internet solo durante la
+> build). El arranque posterior es cuestión de segundos y ya no depende de la red.
+>
+> El sistema está listo cuando el log muestra `Seed completado` y
+> `modelo cargado, listo para operar`.
 
 | URL | Qué es |
 |---|---|
 | http://localhost:8080 | Frontend (login) |
 | http://localhost:8080/swagger | Swagger UI completo |
 
-> Si los puertos 8080/5433 están ocupados en su máquina, cambie `API_PORT` y
-> `POSTGRES_PORT` copiando `.env.example` a `.env`.
+**Solución de problemas:**
+- *Puerto ocupado* (`port is already allocated`): copie `.env.example` a `.env` y cambie
+  `API_PORT` y/o `POSTGRES_PORT`; vuelva a ejecutar `docker compose up`.
+- *Reiniciar desde cero* (borra datos de demo): `docker compose down -v` y luego
+  `docker compose up --build`.
+- En Docker Desktop asigne al menos **4 GB de RAM** (Settings → Resources); el modelo
+  facial corre en CPU, no requiere GPU.
 
 Credenciales de demostración (creadas por el seed del primer arranque):
 
