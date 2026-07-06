@@ -10,6 +10,7 @@ using AccessControl.Infrastructure.Servicios;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
@@ -98,8 +99,24 @@ app.UseSerilogRequestLogging();
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.UseDefaultFiles();
-app.UseStaticFiles();
+// Frontend estático: en desarrollo se sirve directo desde la carpeta frontend/ del
+// repo (Frontend:Ruta); en Docker esa carpeta se copia a wwwroot y no hace falta config.
+var rutaFrontend = app.Configuration["Frontend:Ruta"];
+if (!string.IsNullOrEmpty(rutaFrontend))
+{
+    var rutaCompleta = Path.GetFullPath(rutaFrontend, app.Environment.ContentRootPath);
+    if (Directory.Exists(rutaCompleta))
+    {
+        var proveedor = new PhysicalFileProvider(rutaCompleta);
+        app.UseDefaultFiles(new DefaultFilesOptions { FileProvider = proveedor });
+        app.UseStaticFiles(new StaticFileOptions { FileProvider = proveedor });
+    }
+}
+else
+{
+    app.UseDefaultFiles();
+    app.UseStaticFiles();
+}
 
 app.UseAuthentication();
 app.UseAuthorization();

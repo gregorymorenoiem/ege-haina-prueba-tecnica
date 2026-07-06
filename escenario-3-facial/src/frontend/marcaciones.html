@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Marcaciones · EGE Haina</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+  <div id="nav"></div>
+
+  <div class="container mb-5">
+    <h1 class="h4 mb-3">Marcaciones</h1>
+    <div id="alerta"></div>
+
+    <div class="card shadow-sm mb-3">
+      <div class="card-body py-3">
+        <div class="row g-2">
+          <div class="col-md-3">
+            <label class="form-label small mb-1">Desde</label>
+            <input class="form-control" type="date" id="filtroDesde">
+          </div>
+          <div class="col-md-3">
+            <label class="form-label small mb-1">Hasta</label>
+            <input class="form-control" type="date" id="filtroHasta">
+          </div>
+          <div class="col-md-3">
+            <label class="form-label small mb-1">Localidad</label>
+            <select class="form-select" id="filtroLocalidad"><option value="">Todas</option></select>
+          </div>
+          <div class="col-md-2">
+            <label class="form-label small mb-1">Resultado</label>
+            <select class="form-select" id="filtroResultado">
+              <option value="">Todos</option>
+              <option value="ACEPTADA">Aceptada</option>
+              <option value="RECHAZADA">Rechazada</option>
+            </select>
+          </div>
+          <div class="col-md-1 d-flex align-items-end">
+            <button class="btn btn-outline-secondary w-100" id="botonFiltrar">Filtrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card shadow-sm">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Fecha/hora (UTC)</th><th>Resultado</th><th>Empleado</th>
+              <th>Score</th><th>Terminal</th><th>Localidad</th>
+            </tr>
+          </thead>
+          <tbody id="tabla"></tbody>
+        </table>
+      </div>
+      <div class="card-footer d-flex justify-content-between align-items-center">
+        <span id="resumen" class="text-muted small"></span>
+        <div>
+          <button class="btn btn-sm btn-outline-secondary" id="botonAnterior">&laquo;</button>
+          <span class="mx-2" id="paginaActual">1</span>
+          <button class="btn btn-sm btn-outline-secondary" id="botonSiguiente">&raquo;</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/marcaciones.js"></script>
+</body>
+</html>
