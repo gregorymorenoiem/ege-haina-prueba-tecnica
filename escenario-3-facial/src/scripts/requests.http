@@ -1,0 +1,132 @@
+# Flujo E2E completo del Escenario 3 — usable con la extensión REST Client de
+# VS Code o con JetBrains HTTP Client. Requiere `docker compose up --build` corriendo.
+#
+# Orden: login → catálogos → crear empleado con foto → validar marcación → listados.
+
+@base = http://localhost:8080
+
+### 1. Login como Admin (puede hacerlo todo)
+# @name login
+POST {{base}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@egehaina.com",
+  "password": "Admin123!"
+}
+
+### Guarde el token de la respuesta anterior:
+@token = {{login.response.body.token}}
+
+### 2. Localidades (seed: las 15 de EGE Haina)
+GET {{base}}/api/localidades
+Authorization: Bearer {{token}}
+
+### 3. Terminales (seed: 2 en Central Haina, 1 en Oficinas Centrales)
+GET {{base}}/api/terminales
+Authorization: Bearer {{token}}
+
+### 4. Empleados existentes (seed: 3 demo sin foto)
+GET {{base}}/api/empleados?pagina=1&tamanoPagina=20
+Authorization: Bearer {{token}}
+
+### 5. Crear empleado CON foto de carnet (ajuste la ruta a una foto suya).
+# Al guardar se genera el embedding de referencia (ArcFace 512-d).
+POST {{base}}/api/empleados
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=frontera
+
+--frontera
+Content-Disposition: form-data; name="Codigo"
+
+EH-0100
+--frontera
+Content-Disposition: form-data; name="Nombre"
+
+Su
+--frontera
+Content-Disposition: form-data; name="Apellido"
+
+Nombre
+--frontera
+Content-Disposition: form-data; name="Cedula"
+
+001-9999999-9
+--frontera
+Content-Disposition: form-data; name="Cargo"
+
+Evaluador
+--frontera
+Content-Disposition: form-data; name="LocalidadId"
+
+2
+--frontera
+Content-Disposition: form-data; name="Foto"; filename="carnet.jpg"
+Content-Type: image/jpeg
+
+< ./carnet.jpg
+--frontera--
+
+### 6. Validar marcación en el Portón Principal de Central Haina (terminal 1)
+# con OTRA foto de la misma persona → ACEPTADA con score.
+POST {{base}}/api/marcaciones/validar
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=frontera
+
+--frontera
+Content-Disposition: form-data; name="TerminalId"
+
+1
+--frontera
+Content-Disposition: form-data; name="Imagen"; filename="captura.jpg"
+Content-Type: image/jpeg
+
+< ./captura.jpg
+--frontera--
+
+### 7. Listado de marcaciones (filtros: desde, hasta, localidadId, resultado)
+GET {{base}}/api/marcaciones?pagina=1&resultado=ACEPTADA
+Authorization: Bearer {{token}}
+
+### 8. Verificación de roles: Operaciones NO puede crear empleados (espere 403)
+# @name loginOperaciones
+POST {{base}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "operaciones@egehaina.com",
+  "password": "Operaciones123!"
+}
+
+###
+@tokenOperaciones = {{loginOperaciones.response.body.token}}
+
+POST {{base}}/api/empleados
+Authorization: Bearer {{tokenOperaciones}}
+Content-Type: multipart/form-data; boundary=frontera
+
+--frontera
+Content-Disposition: form-data; name="Codigo"
+
+EH-0200
+--frontera
+Content-Disposition: form-data; name="Nombre"
+
+No
+--frontera
+Content-Disposition: form-data; name="Apellido"
+
+Autorizado
+--frontera
+Content-Disposition: form-data; name="Cedula"
+
+001-8888888-8
+--frontera
+Content-Disposition: form-data; name="LocalidadId"
+
+2
+--frontera--
+
+### 9. Baja lógica del empleado creado (ajuste el id)
+DELETE {{base}}/api/empleados/4
+Authorization: Bearer {{token}}
