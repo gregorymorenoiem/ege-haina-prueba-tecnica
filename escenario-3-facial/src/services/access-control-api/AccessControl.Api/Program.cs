@@ -1,8 +1,11 @@
 using System.Text;
 using AccessControl.Api.Middleware;
 using AccessControl.Domain.Entities;
+using AccessControl.Domain.Interfaces;
+using AccessControl.Infrastructure.Almacenamiento;
 using AccessControl.Infrastructure.Auth;
 using AccessControl.Infrastructure.Persistencia;
+using AccessControl.Infrastructure.Servicios;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -42,6 +45,10 @@ builder.Services
         ClockSkew = TimeSpan.FromSeconds(30)
     });
 builder.Services.AddAuthorization();
+
+// --- Servicios de aplicación ---
+builder.Services.AddSingleton<IFotoStorage, FotoStorage>();
+builder.Services.AddScoped<EmpleadoService>();
 
 builder.Services.AddControllers();
 
