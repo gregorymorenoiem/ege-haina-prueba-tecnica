@@ -25,6 +25,7 @@ services:
     build:
       context: .
       dockerfile: services/access-control-api/Dockerfile
+    restart: unless-stopped
     depends_on:
       postgres:
         condition: service_healthy
