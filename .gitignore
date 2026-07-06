@@ -1,0 +1,37 @@
+# ===== .NET =====
+bin/
+obj/
+*.user
+*.suo
+.vs/
+*.swp
+TestResults/
+artifacts/
+
+# ===== Python =====
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.egg-info/
+
+# ===== Node (por si se agrega tooling de frontend) =====
+node_modules/
+
+# ===== IDE =====
+.idea/
+.vscode/
+*.DotSettings.user
+
+# ===== Entorno y secretos =====
+.env
+!.env.example
+
+# ===== Datos en tiempo de ejecución (fotos, capturas, modelos, BD) =====
+escenario-3-facial/src/data/
+
+# ===== Archivos temporales de Office =====
+~$*
+
+# ===== macOS =====
+.DS_Store
