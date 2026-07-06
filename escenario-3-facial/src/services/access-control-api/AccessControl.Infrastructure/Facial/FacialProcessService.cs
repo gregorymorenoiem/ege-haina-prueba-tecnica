@@ -101,7 +101,19 @@ public class FacialProcessService : IFacialService, IHostedService, IDisposable
                 await _proceso!.StandardInput.WriteLineAsync(
                     JsonSerializer.Serialize(peticion).AsMemory(), timeout.Token);
                 await _proceso.StandardInput.FlushAsync(timeout.Token);
-                linea = await _proceso.StandardOutput.ReadLineAsync(timeout.Token);
+
+                // Se ignoran líneas que no sean JSON del protocolo (algunas librerías
+                // del worker imprimen diagnósticos por stdout pese a la redirección).
+                do
+                {
+                    linea = await _proceso.StandardOutput.ReadLineAsync(timeout.Token);
+                    if (linea is not null && !linea.StartsWith('{'))
+                    {
+                        _logger.LogDebug("stdout no-protocolo del worker: {Linea}", linea);
+                        continue;
+                    }
+                    break;
+                } while (true);
             }
             catch (Exception ex) when (ex is IOException or OperationCanceledException)
             {

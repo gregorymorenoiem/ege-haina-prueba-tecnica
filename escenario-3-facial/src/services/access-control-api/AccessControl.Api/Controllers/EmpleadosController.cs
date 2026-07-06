@@ -40,7 +40,7 @@ public class EmpleadosController : ControllerBase
         pagina = Math.Max(1, pagina);
         tamanoPagina = Math.Clamp(tamanoPagina, 1, 100);
 
-        var consulta = _db.Empleados.Include(e => e.Localidad).AsNoTracking().AsQueryable();
+        var consulta = _db.Empleados.AsNoTracking().AsQueryable();
         if (!incluirInactivos)
             consulta = consulta.Where(e => e.Activo);
         if (localidadId is not null)
@@ -60,7 +60,11 @@ public class EmpleadosController : ControllerBase
             .OrderBy(e => e.Apellido).ThenBy(e => e.Nombre)
             .Skip((pagina - 1) * tamanoPagina)
             .Take(tamanoPagina)
-            .Select(e => EmpleadoDto.DesdeEntidad(e))
+            .Select(e => new EmpleadoDto(
+                e.Id, e.Codigo, e.Nombre, e.Apellido, e.Cedula, e.Cargo,
+                e.LocalidadId, e.Localidad.Nombre,
+                e.FotoCarnetPath != null, e.EmbeddingJson != null,
+                e.Activo, e.CreatedAt))
             .ToListAsync(ct);
 
         return new PaginaDto<EmpleadoDto>(items, total, pagina, tamanoPagina);
