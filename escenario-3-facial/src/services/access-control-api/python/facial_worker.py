@@ -24,9 +24,15 @@ import json
 import os
 import sys
 
-import cv2
-import numpy as np
-from insightface.app import FaceAnalysis
+# stdout es EXCLUSIVO del protocolo JSON. InsightFace/onnxruntime imprimen
+# diagnósticos con print(), así que se reserva el stdout real y se redirige
+# sys.stdout a stderr ANTES de importar las librerías.
+PROTOCOLO = sys.stdout
+sys.stdout = sys.stderr
+
+import cv2  # noqa: E402
+import numpy as np  # noqa: E402
+from insightface.app import FaceAnalysis  # noqa: E402
 
 MODELO = "buffalo_l"
 
@@ -37,8 +43,8 @@ def log(mensaje: str) -> None:
 
 
 def responder(payload: dict) -> None:
-    sys.stdout.write(json.dumps(payload) + "\n")
-    sys.stdout.flush()
+    PROTOCOLO.write(json.dumps(payload) + "\n")
+    PROTOCOLO.flush()
 
 
 def cargar_motor() -> FaceAnalysis:
