@@ -21,4 +21,10 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <!-- El worker Python viaja junto al binario (bin/python/) para que la ruta
+       por defecto de Facial:WorkerScript funcione en local y en Docker. -->
+  <ItemGroup>
+    <None Include="..\python\**" LinkBase="python" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>

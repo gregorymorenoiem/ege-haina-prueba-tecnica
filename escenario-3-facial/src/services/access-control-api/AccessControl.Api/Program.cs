@@ -4,6 +4,7 @@ using AccessControl.Domain.Entities;
 using AccessControl.Domain.Interfaces;
 using AccessControl.Infrastructure.Almacenamiento;
 using AccessControl.Infrastructure.Auth;
+using AccessControl.Infrastructure.Facial;
 using AccessControl.Infrastructure.Persistencia;
 using AccessControl.Infrastructure.Servicios;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -45,6 +46,11 @@ builder.Services
         ClockSkew = TimeSpan.FromSeconds(30)
     });
 builder.Services.AddAuthorization();
+
+// --- Motor facial: proceso hijo Python persistente ---
+builder.Services.AddSingleton<FacialProcessService>();
+builder.Services.AddSingleton<IFacialService>(sp => sp.GetRequiredService<FacialProcessService>());
+builder.Services.AddHostedService(sp => sp.GetRequiredService<FacialProcessService>());
 
 // --- Servicios de aplicación ---
 builder.Services.AddSingleton<IFotoStorage, FotoStorage>();
