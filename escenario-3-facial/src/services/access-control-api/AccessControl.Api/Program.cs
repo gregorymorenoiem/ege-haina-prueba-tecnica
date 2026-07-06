@@ -55,6 +55,7 @@ builder.Services.AddHostedService(sp => sp.GetRequiredService<FacialProcessServi
 // --- Servicios de aplicación ---
 builder.Services.AddSingleton<IFotoStorage, FotoStorage>();
 builder.Services.AddScoped<EmpleadoService>();
+builder.Services.AddScoped<MarcacionService>();
 
 builder.Services.AddControllers();
 
